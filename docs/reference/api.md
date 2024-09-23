@@ -781,24 +781,19 @@ data: $response
 The encoded data is available to both these nodes for classification. The second node i.e. dog-breed-classification takes the
 original input from the pre_processing node along-with the response from the cat-dog-classification node to do further classification
 of the dog breed if required.</p>
-<pre><code class="language-yaml">kind: InferenceGraph
+<pre><code class="language-yaml">
+kind: InferenceGraph
 metadata:
-name: dog-breed-classification
+  name: canary-route
 spec:
-nodes:
-root:
-routerType: Sequence
-routes:
-- service: cat-dog-classifier
-- nodeName: breed-classifier
-data: $request
-breed-classifier:
-routerType: Switch
-routes:
-- service: dog-breed-classifier
-condition: { .predictions.class == &quot;dog&quot; }
-- service: cat-breed-classifier
-condition: { .predictions.class == &quot;cat&quot; }
+  nodes:
+    root:
+      routerType: Splitter
+      routes:
+        - service: mymodel1
+          weight: 20
+        - service: mymodel2
+          weight: 80
 </code></pre>
 </div>
 <table>
